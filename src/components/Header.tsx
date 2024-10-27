@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 interface HeaderProps {
@@ -8,8 +8,22 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ isAuthenticated, onLogout }) => {
   const navigate = useNavigate();
+  const [userName, setUserName] = useState<string>('');
+
+  useEffect(() => {
+    // Get current user's name from localStorage
+    if (isAuthenticated) {
+      const currentUser = localStorage.getItem('currentUser');
+      if (currentUser) {
+        const { name } = JSON.parse(currentUser);
+        setUserName(name);
+      }
+    }
+  }, [isAuthenticated]);
 
   const handleLogout = () => {
+    localStorage.removeItem('currentUser'); // Clear user data
+    setUserName('');
     onLogout();
     navigate('/login');
   };
@@ -27,7 +41,7 @@ const Header: React.FC<HeaderProps> = ({ isAuthenticated, onLogout }) => {
           {isAuthenticated ? (
             <div className="flex gap-4 items-center">
               <Link to="/account" className="z-10 self-stretch text-right hover:text-gray-600">
-                Hi, John
+                Hi, {userName || 'User'}
               </Link>
               <button
                 onClick={handleLogout}
@@ -43,6 +57,7 @@ const Header: React.FC<HeaderProps> = ({ isAuthenticated, onLogout }) => {
           )}
         </div>
       </div>
+
 
       <div className="flex flex-wrap gap-5 justify-between items-start self-center mt-2 w-full max-w-[1390px] max-md:max-w-full">
         <Link to={isAuthenticated ? "/category" : "/"} className="self-stretch text-3xl font-bold text-black hover:opacity-80">

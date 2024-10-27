@@ -91,7 +91,7 @@ function Register({ onRegisterSuccess }: RegisterProps) {
 
   return (
     <div className="flex overflow-hidden flex-col bg-white rounded">
-      <div className="flex flex-col self-center px-16 pt-10 pb-32 mt-10 max-w-full text-base bg-white rounded-3xl border border-solid border-stone-300 w-[576px] max-md:px-5 max-md:pb-24">
+      <div className="flex flex-col self-center px-16 pt-10 pb-32 mt-10 mb-10 ml-12 max-w-full text-base bg-white rounded-3xl border border-solid border-stone-300 w-[576px] max-md:px-5 max-md:pb-24">
         <div className="self-center text-3xl font-semibold text-black">
           Create your account
         </div>
@@ -147,9 +147,16 @@ function Register({ onRegisterSuccess }: RegisterProps) {
           <button
             type="submit"
             disabled={loading}
-            className="overflow-hidden gap-2.5 self-stretch w-full px-36 py-5 mt-10 font-medium tracking-wider text-center text-white uppercase bg-black rounded-md border border-black border-solid min-h-[56px] max-md:px-5 disabled:bg-gray-400 disabled:border-gray-400"
+            className="w-full flex items-center justify-center whitespace-nowrap px-8 py-4 mt-10 font-medium tracking-wider text-white uppercase bg-black rounded-md border border-black border-solid h-14 hover:bg-gray-900 transition-colors duration-200 disabled:bg-gray-400 disabled:border-gray-400 disabled:cursor-not-allowed"
           >
-            {loading ? 'Creating account...' : 'Create account'}
+            {loading ? (
+              <>
+                <span className="animate-spin mr-2 h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
+                Creating account
+              </>
+            ) : (
+              'Create account'
+            )}
           </button>
         </form>
 

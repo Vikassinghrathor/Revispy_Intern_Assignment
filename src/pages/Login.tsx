@@ -20,7 +20,7 @@ function Login({ onLoginSuccess }: LoginProps) {
       ...prev,
       [name]: value
     }));
-    setError(''); // Clear error when input changes
+    setError('');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -35,17 +35,23 @@ function Login({ onLoginSuccess }: LoginProps) {
     );
 
     if (user) {
+      // Store user info in localStorage
+      localStorage.setItem('currentUser', JSON.stringify({
+        name: user.name,
+        email: user.email
+      }));
+
       onLoginSuccess();
       navigate('/category');
     } else {
       setError('Invalid email or password');
     }
   };
-
+  
   return (
     <>
       <div className="flex overflow-hidden flex-col bg-white rounded">
-        <div className="flex flex-col self-center px-16 pt-10 pb-32 mt-10 max-w-full text-base bg-white rounded-3xl border border-solid border-stone-300 w-[576px] max-md:px-5 max-md:pb-24">
+        <div className="flex flex-col self-center px-16 pt-10 pb-32 mt-10 mb-10 ml-12 max-w-full text-base bg-white rounded-3xl border border-solid border-stone-300 w-[576px] max-md:px-5 max-md:pb-24">
           <div className="self-center text-3xl font-semibold text-black">
             Login
           </div>
