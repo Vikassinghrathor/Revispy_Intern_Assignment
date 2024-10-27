@@ -55,21 +55,21 @@ function Register({ onRegisterSuccess }: RegisterProps) {
 
     setLoading(true);
     try {
-      onRegisterSuccess();
-      navigate('/verify-email');
-      // Simulating API call - replace with your actual registration API
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
       // Store email in sessionStorage for verification page
       sessionStorage.setItem('registrationEmail', formData.email);
 
-      // Generate a verification code (in real app, this would be done on backend)
-      const verificationCode = Math.floor(100000 + Math.random() * 900000);
+      // Generate a random 8-digit verification code
+      const verificationCode = Math.floor(10000000 + Math.random() * 90000000).toString();
       sessionStorage.setItem('verificationCode', verificationCode);
 
-      // Navigate to verification page
-      navigate('/verify-email');
+      // Log the code for testing purposes (remove in production)
+      console.log('Verification code:', verificationCode);
 
+      // Simulating API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      onRegisterSuccess();
+      navigate('/verify-email');
     } catch (error) {
       setErrors(prev => ({
         ...prev,
@@ -79,6 +79,7 @@ function Register({ onRegisterSuccess }: RegisterProps) {
       setLoading(false);
     }
   };
+
 
   return (
     <>
