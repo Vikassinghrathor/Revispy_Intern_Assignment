@@ -59,11 +59,11 @@ const Header: React.FC<HeaderProps> = ({ isAuthenticated, onLogout }) => {
       </div>
 
 
-      <div className="flex flex-wrap gap-5 justify-between items-start self-center mt-2 w-full max-w-[1390px] max-md:max-w-full">
+      <div className="flex flex-wrap gap-7 justify-between items-start self-center mt-2 w-full max-w-[1400px] max-md:max-w-full">
         <Link to={isAuthenticated ? "/category" : "/"} className="self-stretch text-3xl font-bold text-black hover:opacity-80">
           ECOMMERCE
         </Link>
-        <div className="flex gap-8 mt-4 text-base font-semibold text-black">
+        <div className="flex gap-14 mt-4 text-base font-semibold text-black">
           <Link to="/categories" className="grow hover:text-gray-600">Categories</Link>
           <Link to="/sale" className="hover:text-gray-600">Sale</Link>
           <Link to="/clearance" className="hover:text-gray-600">Clearance</Link>

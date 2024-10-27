@@ -91,7 +91,7 @@ function Register({ onRegisterSuccess }: RegisterProps) {
 
   return (
     <div className="flex overflow-hidden flex-col bg-white rounded">
-      <div className="flex flex-col self-center px-16 pt-10 pb-32 mt-10 mb-10 ml-12 max-w-full text-base bg-white rounded-3xl border border-solid border-stone-300 w-[576px] max-md:px-5 max-md:pb-24">
+      <div className="flex flex-col self-center px-16 pt-10 pb-32 mt-10 mb-10 ml-32 max-w-full text-base bg-white rounded-3xl border border-solid border-stone-300 w-[576px] max-md:px-5 max-md:pb-24">
         <div className="self-center text-3xl font-semibold text-black">
           Create your account
         </div>

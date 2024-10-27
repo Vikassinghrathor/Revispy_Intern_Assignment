@@ -5,6 +5,12 @@ interface LoginProps {
   onLoginSuccess: () => void;
 }
 
+interface User {
+  name: string;
+  email: string;
+  password: string;
+}
+
 function Login({ onLoginSuccess }: LoginProps) {
   const [formData, setFormData] = useState({
     email: '',
@@ -14,11 +20,11 @@ function Login({ onLoginSuccess }: LoginProps) {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
     setError('');
   };
@@ -27,19 +33,22 @@ function Login({ onLoginSuccess }: LoginProps) {
     e.preventDefault();
 
     // Get registered users from localStorage
-    const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+    const registeredUsers: User[] = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
 
     // Check if user exists and credentials match
     const user = registeredUsers.find(
-      user => user.email === formData.email && user.password === formData.password
+      (user: User) => user.email === formData.email && user.password === formData.password
     );
 
     if (user) {
       // Store user info in localStorage
-      localStorage.setItem('currentUser', JSON.stringify({
-        name: user.name,
-        email: user.email
-      }));
+      localStorage.setItem(
+        'currentUser',
+        JSON.stringify({
+          name: user.name,
+          email: user.email,
+        })
+      );
 
       onLoginSuccess();
       navigate('/category');
@@ -47,14 +56,12 @@ function Login({ onLoginSuccess }: LoginProps) {
       setError('Invalid email or password');
     }
   };
-  
+
   return (
     <>
       <div className="flex overflow-hidden flex-col bg-white rounded">
-        <div className="flex flex-col self-center px-16 pt-10 pb-32 mt-10 mb-10 ml-12 max-w-full text-base bg-white rounded-3xl border border-solid border-stone-300 w-[576px] max-md:px-5 max-md:pb-24">
-          <div className="self-center text-3xl font-semibold text-black">
-            Login
-          </div>
+        <div className="flex flex-col self-center px-16 pt-10 pb-32 mt-10 mb-10 ml-32 max-w-full text-base bg-white rounded-3xl border border-solid border-stone-300 w-[576px] max-md:px-5 max-md:pb-24">
+          <div className="self-center text-3xl font-semibold text-black">Login</div>
           <div className="self-center mt-4 text-base font-medium text-black">
             Welcome back to ECOMMERCE
           </div>

@@ -1,47 +1,41 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, ChangeEvent, KeyboardEvent, ClipboardEvent, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 function VerifyEmail() {
-  const [verificationCode, setVerificationCode] = useState(['', '', '', '', '', '', '', '']);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [email, setEmail] = useState('');
-  const inputRefs = useRef([]);
+  const [verificationCode, setVerificationCode] = useState<string[]>(['', '', '', '', '', '', '', '']);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>('');
+  const [email, setEmail] = useState<string>('');
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Get email and verification code from session storage
     const storedEmail = sessionStorage.getItem('registrationEmail');
     const storedCode = sessionStorage.getItem('verificationCode');
 
     if (!storedEmail || !storedCode) {
-      // If either email or code is missing, redirect to register
       navigate('/register');
     } else {
-      // Mask email for display
       const [username, domain] = storedEmail.split('@');
       const maskedUsername = username.slice(0, 3) + '***';
       setEmail(`${maskedUsername}@${domain}`);
     }
   }, [navigate]);
 
-  const handleInput = (index, value) => {
-    // Allow only numbers
+  const handleInput = (index: number, value: string) => {
     if (!/^\d*$/.test(value)) return;
 
     const newCode = [...verificationCode];
     newCode[index] = value.slice(0, 1);
     setVerificationCode(newCode);
-    setError(''); // Clear any existing error
+    setError('');
 
-    // Auto-focus next input
     if (value && index < 7) {
       inputRefs.current[index + 1]?.focus();
     }
   };
 
-  const handleKeyDown = (index, e) => {
-    // Handle backspace
+  const handleKeyDown = (index: number, e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Backspace') {
       if (!verificationCode[index] && index > 0) {
         const newCode = [...verificationCode];
@@ -50,38 +44,35 @@ function VerifyEmail() {
         inputRefs.current[index - 1]?.focus();
       }
     }
-    // Handle left arrow
     else if (e.key === 'ArrowLeft' && index > 0) {
       inputRefs.current[index - 1]?.focus();
     }
-    // Handle right arrow
     else if (e.key === 'ArrowRight' && index < 7) {
       inputRefs.current[index + 1]?.focus();
     }
   };
 
-  const handlePaste = (e) => {
+  const handlePaste = (e: ClipboardEvent<HTMLInputElement>) => {
     e.preventDefault();
     const pastedData = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 8);
     const newCode = [...verificationCode];
-    pastedData.split('').forEach((char, index) => {
+    pastedData.split('').forEach((char: string, index: number) => {
       if (index < 8) newCode[index] = char;
     });
     setVerificationCode(newCode);
-    setError(''); // Clear any existing error
+    setError('');
 
-    // Focus last filled input or first empty input
     const focusIndex = Math.min(pastedData.length, 7);
     inputRefs.current[focusIndex]?.focus();
   };
 
-  const generateNewVerificationCode = () => {
+  const generateNewVerificationCode = (): string => {
     const newCode = Math.floor(10000000 + Math.random() * 90000000).toString();
     sessionStorage.setItem('verificationCode', newCode);
     return newCode;
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (verificationCode.some(digit => !digit)) {
       setError('Please enter all digits');
@@ -104,11 +95,9 @@ function VerifyEmail() {
         return;
       }
 
-      // Clear verification data on success
       sessionStorage.removeItem('verificationCode');
       sessionStorage.removeItem('registrationEmail');
 
-      // Navigate to login page
       navigate('/login');
     } catch (error) {
       setError('Verification failed. Please try again.');
@@ -119,16 +108,15 @@ function VerifyEmail() {
 
   const handleResendCode = () => {
     const newCode = generateNewVerificationCode();
-    console.log('New verification code:', newCode); // For testing purposes
+    console.log('New verification code:', newCode);
     setError('New verification code sent! Check your email.');
-    // Reset input fields
     setVerificationCode(['', '', '', '', '', '', '', '']);
     inputRefs.current[0]?.focus();
   };
 
   return (
     <div className="flex overflow-hidden flex-col bg-white rounded">
-      <div className="flex flex-col self-center px-16 py-12 mt-10 max-w-full bg-white rounded-3xl border border-solid border-stone-300 w-[576px] max-md:px-5">
+      <div className="flex flex-col self-center px-16 py-12 mt-10 mb-10 ml-32 max-w-full bg-white rounded-3xl border border-solid border-stone-300 w-[576px] max-md:px-5">
         <div className="self-center text-3xl font-semibold text-black">
           Verify your email
         </div>
@@ -150,8 +138,8 @@ function VerifyEmail() {
                 inputMode="numeric"
                 autoComplete="one-time-code"
                 value={digit}
-                onChange={(e) => handleInput(index, e.target.value)}
-                onKeyDown={(e) => handleKeyDown(index, e)}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => handleInput(index, e.target.value)}
+                onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => handleKeyDown(index, e)}
                 onPaste={handlePaste}
                 className="flex shrink-0 bg-white rounded-md border border-solid border-stone-300 h-[47px] w-[47px] text-center text-lg font-medium focus:border-black focus:outline-none"
                 maxLength={1}

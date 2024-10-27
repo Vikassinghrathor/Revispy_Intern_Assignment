@@ -3,10 +3,17 @@ import { Check } from 'lucide-react';
 import { faker } from '@faker-js/faker';
 import toast from 'react-hot-toast';
 
+// Define the Category interface
+interface Category {
+  id: string;
+  name: string;
+  isSelected: boolean;
+}
+
 // Custom hook for managing categories with persistence
 const useCategories = () => {
-  const [categories, setCategories] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   // Load categories from localStorage on mount
   useEffect(() => {
@@ -16,7 +23,7 @@ const useCategories = () => {
         setCategories(JSON.parse(savedCategories));
       } else {
         // Generate initial categories if none exist
-        const initialCategories = Array.from({ length: 100 }, () => ({
+        const initialCategories: Category[] = Array.from({ length: 100 }, () => ({
           id: faker.string.uuid(),
           name: faker.commerce.department(),
           isSelected: false
@@ -37,7 +44,7 @@ const useCategories = () => {
     }
   }, [categories, isLoading]);
 
-  const toggleCategory = (categoryId) => {
+  const toggleCategory = (categoryId: string) => {
     setCategories(prevCategories =>
       prevCategories.map(category =>
         category.id === categoryId
@@ -61,13 +68,13 @@ const useCategories = () => {
 
 const Category = () => {
   const { categories, toggleCategory, getSelectedCategories, isLoading } = useCategories();
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState<number>(1);
   const itemsPerPage = 6;
 
   // Handle category selection with toast notification
-  const handleCategoryClick = (categoryId) => {
-    toggleCategory(categoryId);
+  const handleCategoryClick = (categoryId: string) => {
     const category = categories.find(c => c.id === categoryId);
+    toggleCategory(categoryId);
     if (category) {
       toast.success(
         category.isSelected
@@ -95,7 +102,7 @@ const Category = () => {
   // Generate pagination array
   const getPaginationArray = () => {
     const delta = 2;
-    const range = [];
+    const range: (number | string)[] = [];
     for (
       let i = Math.max(2, currentPage - delta);
       i <= Math.min(totalPages - 1, currentPage + delta);
