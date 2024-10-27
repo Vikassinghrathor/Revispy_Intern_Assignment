@@ -55,18 +55,33 @@ function Register({ onRegisterSuccess }: RegisterProps) {
 
     setLoading(true);
     try {
-      // Store email in sessionStorage for verification page
-      sessionStorage.setItem('registrationEmail', formData.email);
+      // Get existing users or initialize empty array
+      const existingUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
 
-      // Generate a random 8-digit verification code
+      // Check if email already exists
+      if (existingUsers.some(user => user.email === formData.email)) {
+        setErrors(prev => ({
+          ...prev,
+          email: 'Email already registered'
+        }));
+        setLoading(false);
+        return;
+      }
+
+      // Add new user
+      const newUser = {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password
+      };
+
+      existingUsers.push(newUser);
+      localStorage.setItem('registeredUsers', JSON.stringify(existingUsers));
+
+      // Generate verification code (if needed)
       const verificationCode = Math.floor(10000000 + Math.random() * 90000000).toString();
       sessionStorage.setItem('verificationCode', verificationCode);
-
-      // Log the code for testing purposes (remove in production)
       console.log('Verification code:', verificationCode);
-
-      // Simulating API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
 
       onRegisterSuccess();
       navigate('/verify-email');
@@ -79,7 +94,6 @@ function Register({ onRegisterSuccess }: RegisterProps) {
       setLoading(false);
     }
   };
-
 
   return (
     <>
